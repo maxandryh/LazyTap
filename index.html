@@ -4,13 +4,30 @@
     <title>LazyTap Web App</title>
     <style>
         body { text-align: center; font-family: Arial; margin-top: 50px; }
-        button { padding: 10px 20px; font-size: 16px; }
+        button { padding: 10px 20px; font-size: 16px; margin-top: 20px; }
+        #tapCount { font-size: 24px; margin-top: 20px; }
     </style>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
     <h1>👋 Вітаю у LazyTap!</h1>
-    <p>Це твоє міні-вікно Telegram Web App</p>
+
+    <div id="tapCount">Тапів: 0</div>
+
     <button onclick="Telegram.WebApp.close()">Закрити</button>
+
+    <script>
+        // Функція для отримання параметрів URL
+        function getQueryParam(param) {
+            let params = new URLSearchParams(window.location.search);
+            return params.get(param);
+        }
+
+        // Отримуємо taps з URL
+        let taps = getQueryParam('taps') || 0;
+
+        // Показуємо у div
+        document.getElementById('tapCount').innerText = 'Тапів: ' + taps;
+    </script>
 </body>
 </html>
