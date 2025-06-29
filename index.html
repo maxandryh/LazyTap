@@ -4,30 +4,37 @@
     <title>LazyTap Web App</title>
     <style>
         body { text-align: center; font-family: Arial; margin-top: 50px; }
-        button { padding: 10px 20px; font-size: 16px; margin-top: 20px; }
-        #tapCount { font-size: 24px; margin-top: 20px; }
+        button { padding: 10px 20px; font-size: 16px; }
     </style>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
     <h1>👋 Вітаю у LazyTap!</h1>
-
-    <div id="tapCount">Тапів: 0</div>
-
+    <p id="tapCount">Завантаження...</p>
     <button onclick="Telegram.WebApp.close()">Закрити</button>
 
     <script>
-        // Функція для отримання параметрів URL
-        function getQueryParam(param) {
-            let params = new URLSearchParams(window.location.search);
-            return params.get(param);
-        }
+        Telegram.WebApp.ready();
 
-        // Отримуємо taps з URL
-        let taps = getQueryParam('taps') || 0;
+        // Отримуємо ID юзера з Telegram WebApp
+        const userId = Telegram.WebApp.initDataUnsafe.user?.id;
 
-        // Показуємо у div
-        document.getElementById('tapCount').innerText = 'Тапів: ' + taps;
+        // Симуляція отримання даних (наприклад, ти можеш потім зробити запит до сервера)
+        // Поки для тесту просто виводимо userId
+        document.getElementById('tapCount').innerText = "Ваш Telegram ID: " + userId;
+
+        // Тут ти можеш зробити запит до свого backend, щоб отримати кількість тапів цього юзера
+        // Наприклад:
+        /*
+        fetch(`https://твій-сервер/get_taps?user_id=${userId}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('tapCount').innerText = "Ваші тапи: " + data.taps;
+            })
+            .catch(err => {
+                document.getElementById('tapCount').innerText = "Помилка отримання тапів";
+            });
+        */
     </script>
 </body>
 </html>
