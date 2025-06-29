@@ -1,64 +1,107 @@
 <!DOCTYPE html>
-<html>
+<html lang="uk">
 <head>
-    <title>LazyTap Web App</title>
-    <style>
-        body { text-align: center; font-family: Arial; margin-top: 50px; background-color: #f0f0f0; }
-        #tapButton {
-            padding: 10px;
-            background-color: #ffffff;
-            border: 2px solid #00aaff;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: transform 0.1s;
-            display: inline-block;
-        }
-        #tapButton img {
-            width: 150px;
-        }
-        #tapButton:active {
-            transform: scale(0.95);
-        }
-    </style>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LazyTap WebApp</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0; padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: #ffffff;
+    text-align: center;
+  }
+  #tapCount {
+    font-size: 2.5em;
+    font-weight: bold;
+    margin-bottom: 30px;
+    color: #333;
+  }
+  #tapButton {
+    width: 140px;
+    height: 140px;
+    border-radius: 70px;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 2em;
+    cursor: pointer;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+    transition: background-color 0.3s ease;
+  }
+  #tapButton:hover {
+    background-color: #45a049;
+  }
+  #iconsRow {
+    margin-top: 40px;
+    width: 90%;
+    max-width: 400px;
+    display: flex;
+    justify-content: space-around;
+  }
+  .iconButton {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    color: #666;
+    font-size: 0.9em;
+    user-select: none;
+  }
+  .iconButton:hover {
+    color: #4CAF50;
+  }
+  .iconImg {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 8px;
+  }
+</style>
 </head>
 <body>
-    <h1>👋 Вітаю у LazyTap!</h1>
-    <p id="tapCount">Завантаження...</p>
 
-    <div id="tapButton" onclick="handleTap()">
-        <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="Tap Button">
-        <p>🔘 ТАП</p>
-    </div>
+<div id="tapCount">Тапів: 1000</div>
+<button id="tapButton" aria-label="Тап кнопка">🔘</button>
 
-    <button onclick="Telegram.WebApp.close()">Закрити</button>
+<div id="iconsRow">
+  <div class="iconButton" onclick="alert('Реферал')">
+    <img class="iconImg" src="https://img.icons8.com/ios-filled/50/000000/referral.png" alt="Реферал" />
+    Реферал
+  </div>
+  <div class="iconButton" onclick="alert('Earn')">
+    <img class="iconImg" src="https://img.icons8.com/ios-filled/50/000000/money-bag.png" alt="Earn" />
+    Earn
+  </div>
+  <div class="iconButton" onclick="alert('Bust')">
+    <img class="iconImg" src="https://img.icons8.com/ios-filled/50/000000/explosion.png" alt="Bust" />
+    Bust
+  </div>
+  <div class="iconButton" onclick="alert('Skins')">
+    <img class="iconImg" src="https://img.icons8.com/ios-filled/50/000000/t-shirt.png" alt="Skins" />
+    Skins
+  </div>
+</div>
 
-    <script>
-        Telegram.WebApp.ready();
+<script>
+  const tapCountElem = document.getElementById('tapCount');
+  const tapButton = document.getElementById('tapButton');
 
-        const userId = Telegram.WebApp.initDataUnsafe.user?.id;
-        const tapCountElem = document.getElementById('tapCount');
-        
-        // Функція, яка оновлює лічильник тапів у WebApp
-        function updateTapCount(count) {
-            tapCountElem.innerText = `Ваші тапи: ${count}`;
-        }
+  let taps = 1000; // Початковий ліміт тапів
 
-        // Початковий запит на отримання кількості тапів
-        fetch(`https://твій_сервер_або_сайт/get_taps?user_id=${userId}`)
-            .then(res => res.json())
-            .then(data => updateTapCount(data.taps))
-            .catch(() => updateTapCount("Не вдалося завантажити"));
+  tapButton.onclick = () => {
+    if (taps > 0) {
+      taps--;
+      tapCountElem.textContent = `Тапів: ${taps}`;
+    } else {
+      alert('Ліміт тапів вичерпано!');
+    }
+  }
+</script>
 
-        // Обробник натискання на кнопку "ТАП"
-        function handleTap() {
-            Telegram.WebApp.sendData("tap_from_webapp");
-        }
-
-        // Обробник відповіді від бота (якщо треба)
-        Telegram.WebApp.onEvent('mainButtonClicked', () => {
-            // Можна додати додаткову логіку, якщо хочеш
-        });
-    </script>
 </body>
 </html>
