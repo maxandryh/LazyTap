@@ -24,7 +24,7 @@
 </head>
 <body>
     <h1>👋 Вітаю у LazyTap!</h1>
-    <p id="tapCount">Твій Telegram ID: </p>
+    <p id="tapCount">Завантаження...</p>
 
     <div id="tapButton" onclick="handleTap()">
         <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" alt="Tap Button">
@@ -37,12 +37,28 @@
         Telegram.WebApp.ready();
 
         const userId = Telegram.WebApp.initDataUnsafe.user?.id;
-        document.getElementById('tapCount').innerText = "Ваш Telegram ID: " + userId;
+        const tapCountElem = document.getElementById('tapCount');
+        
+        // Функція, яка оновлює лічильник тапів у WebApp
+        function updateTapCount(count) {
+            tapCountElem.innerText = `Ваші тапи: ${count}`;
+        }
 
+        // Початковий запит на отримання кількості тапів
+        fetch(`https://твій_сервер_або_сайт/get_taps?user_id=${userId}`)
+            .then(res => res.json())
+            .then(data => updateTapCount(data.taps))
+            .catch(() => updateTapCount("Не вдалося завантажити"));
+
+        // Обробник натискання на кнопку "ТАП"
         function handleTap() {
-            // Відправити дані в бота
             Telegram.WebApp.sendData("tap_from_webapp");
         }
+
+        // Обробник відповіді від бота (якщо треба)
+        Telegram.WebApp.onEvent('mainButtonClicked', () => {
+            // Можна додати додаткову логіку, якщо хочеш
+        });
     </script>
 </body>
 </html>
