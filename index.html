@@ -1,48 +1,38 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>LazyTap WebApp</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LazyTap зі скінами</title>
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 0; padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    background: #ffffff;
-    text-align: center;
-  }
-  #tapCount {
-    font-size: 2.5em;
-    font-weight: bold;
-    margin-bottom: 30px;
-    color: #333;
-  }
+  body { font-family: Arial; text-align: center; margin: 20px; }
+
   #tapButton {
     width: 140px;
     height: 140px;
     border-radius: 70px;
     border: none;
-    background-color: #4CAF50;
     color: white;
     font-size: 2em;
     cursor: pointer;
+    background-size: cover;
+    background-position: center;
     box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-    transition: background-color 0.3s ease;
+    transition: background-image 0.3s ease;
   }
-  #tapButton:hover {
-    background-color: #45a049;
-  }
+
+  .skin1 { background-image: url('images/skin1.png'); }
+  .skin2 { background-image: url('images/skin2.png'); }
+  .skin3 { background-image: url('images/skin3.png'); }
+
   #iconsRow {
     margin-top: 40px;
     width: 90%;
-    max-width: 400px;
+    max-width: 500px;
     display: flex;
-    justify-content: space-around;
+    justify-content: space-evenly;
+    margin-left: auto;
+    margin-right: auto;
   }
   .iconButton {
     display: flex;
@@ -53,54 +43,129 @@
     font-size: 0.9em;
     user-select: none;
   }
-  .iconButton:hover {
-    color: #4CAF50;
-  }
   .iconImg {
     width: 40px;
     height: 40px;
     margin-bottom: 8px;
   }
+  .screen {
+    display: none;
+  }
+  .skinButton {
+    margin: 5px;
+    padding: 10px 15px;
+    cursor: pointer;
+    border: 1px solid #4CAF50;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+  }
 </style>
 </head>
 <body>
 
-<div id="tapCount">Тапів: 1000</div>
-<button id="tapButton" aria-label="Тап кнопка">🔘</button>
+<h2>Тапів: <span id="totalTaps">0</span></h2>
+<h3>Енергія: <span id="energy">1000</span></h3>
+
+<button id="tapButton" class="skin1">Тап</button>
 
 <div id="iconsRow">
-  <div class="iconButton" onclick="alert('Реферал')">
+  <div class="iconButton" data-screen="referralScreen">
     <img class="iconImg" src="https://img.icons8.com/ios-filled/50/000000/referral.png" alt="Реферал" />
     Реферал
   </div>
-  <div class="iconButton" onclick="alert('Earn')">
+  <div class="iconButton" data-screen="earnScreen">
     <img class="iconImg" src="https://img.icons8.com/ios-filled/50/000000/money-bag.png" alt="Earn" />
     Earn
   </div>
-  <div class="iconButton" onclick="alert('Bust')">
+  <div class="iconButton" data-screen="bustScreen">
     <img class="iconImg" src="https://img.icons8.com/ios-filled/50/000000/explosion.png" alt="Bust" />
     Bust
   </div>
-  <div class="iconButton" onclick="alert('Skins')">
+  <div class="iconButton" data-screen="skinsScreen">
     <img class="iconImg" src="https://img.icons8.com/ios-filled/50/000000/t-shirt.png" alt="Skins" />
     Skins
   </div>
 </div>
 
+<!-- Віртуальні екрани -->
+
+<div id="referralScreen" class="screen">
+  <h2>Реферал</h2>
+  <button class="closeScreen">Назад</button>
+</div>
+
+<div id="earnScreen" class="screen">
+  <h2>Earn</h2>
+  <button class="closeScreen">Назад</button>
+</div>
+
+<div id="bustScreen" class="screen">
+  <h2>Bust</h2>
+  <button class="closeScreen">Назад</button>
+</div>
+
+<div id="skinsScreen" class="screen">
+  <h2>Вибір скіна</h2>
+  <button class="skinButton" onclick="setSkin('skin1')">Скін 1</button>
+  <button class="skinButton" onclick="setSkin('skin2')">Скін 2</button>
+  <button class="skinButton" onclick="setSkin('skin3')">Скін 3</button>
+  <button class="closeScreen">Назад</button>
+</div>
+
 <script>
-  const tapCountElem = document.getElementById('tapCount');
+  let totalTaps = 0;
+  let energy = 1000;
+  const maxEnergy = 1000;
+  const energyElem = document.getElementById('energy');
+  const totalTapsElem = document.getElementById('totalTaps');
   const tapButton = document.getElementById('tapButton');
 
-  let taps = 1000; // Початковий ліміт тапів
+  function updateDisplay() {
+    energyElem.innerText = energy;
+    totalTapsElem.innerText = totalTaps;
+  }
 
   tapButton.onclick = () => {
-    if (taps > 0) {
-      taps--;
-      tapCountElem.textContent = `Тапів: ${taps}`;
+    if (energy > 0) {
+      energy--;
+      totalTaps++;
+      updateDisplay();
     } else {
-      alert('Ліміт тапів вичерпано!');
+      alert('Енергія закінчилась! Чекай відновлення...');
     }
+  };
+
+  setInterval(() => {
+    if (energy < maxEnergy) {
+      energy++;
+      updateDisplay();
+    }
+  }, 3000);
+
+  const screens = document.querySelectorAll('.screen');
+  const iconButtons = document.querySelectorAll('.iconButton');
+  const closeButtons = document.querySelectorAll('.closeScreen');
+
+  iconButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const screenId = button.getAttribute('data-screen');
+      screens.forEach(screen => screen.style.display = 'none');
+      document.getElementById(screenId).style.display = 'block';
+    });
+  });
+
+  closeButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      screens.forEach(screen => screen.style.display = 'none');
+    });
+  });
+
+  function setSkin(skinClass) {
+    tapButton.className = '';  // Забираємо всі попередні скіни
+    tapButton.classList.add(skinClass);  // Додаємо новий
   }
+
+  updateDisplay();
 </script>
 
 </body>
