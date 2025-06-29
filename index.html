@@ -15,18 +15,9 @@
 
     <script>
         Telegram.WebApp.ready();
-
-        // Отримуємо ID юзера з Telegram WebApp
         const userId = Telegram.WebApp.initDataUnsafe.user?.id;
 
-        // Симуляція отримання даних (наприклад, ти можеш потім зробити запит до сервера)
-        // Поки для тесту просто виводимо userId
-        document.getElementById('tapCount').innerText = "Ваш Telegram ID: " + userId;
-
-        // Тут ти можеш зробити запит до свого backend, щоб отримати кількість тапів цього юзера
-        // Наприклад:
-        /*
-        fetch(`https://твій-сервер/get_taps?user_id=${userId}`)
+        fetch(`http://localhost:5000/get_taps?user_id=${userId}`)
             .then(response => response.json())
             .then(data => {
                 document.getElementById('tapCount').innerText = "Ваші тапи: " + data.taps;
@@ -34,7 +25,6 @@
             .catch(err => {
                 document.getElementById('tapCount').innerText = "Помилка отримання тапів";
             });
-        */
     </script>
 </body>
 </html>
