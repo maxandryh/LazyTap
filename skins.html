@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Skins</title>
+<style>
+  body {
+  font-family: Arial, sans-serif;
+  margin: 0; 
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  text-align: center;
+
+  /* М'який пастельний градієнт */
+  background: linear-gradient(135deg, #f5e9d3, #d9ccc4, #c4b7a6);
+  background-size: 400% 400%;
+  animation: gradientBG 20s ease infinite;
+  color: #4b3b2b; /* Темно-коричневий текст для контрасту і комфорту */
+}
+  .skinOption {
+    width: 140px;
+    height: 140px;
+    border-radius: 70px;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    color: white;
+    font-size: 1.2em;
+    user-select: none;
+    transition: transform 0.2s ease;
+  }
+  .skinOption:hover {
+    transform: scale(1.1);
+  }
+  #greenSkin { background-color: #4CAF50; }
+  #redSkin { background-color: #e74c3c; }
+  #yellowSkin { background-color: #f1c40f; color: black; }
+</style>
+</head>
+<body>
+    <button id="backButton" style="
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    padding: 10px 15px;
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 5px;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+    transition: background-color 0.3s ease;
+  ">Назад</button>
+
+<div id="greenSkin" class="skinOption">Зелений</div>
+<div id="redSkin" class="skinOption">Червоний</div>
+<div id="yellowSkin" class="skinOption">Жовтий</div>
+
+<script>
+    
+    document.getElementById('backButton').onclick = () => {
+      window.location.href = 'index.html';
+    };
+  
+  const greenSkin = document.getElementById('greenSkin');
+  const redSkin = document.getElementById('redSkin');
+  const yellowSkin = document.getElementById('yellowSkin');
+
+  function setSkin(skin) {
+    localStorage.setItem('skin', skin);
+  }
+
+  greenSkin.onclick = () => setSkin('green');
+  redSkin.onclick = () => setSkin('red');
+  yellowSkin.onclick = () => setSkin('yellow');
+</script>
+
+</body>
+</html>

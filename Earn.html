@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Earn Taps</title>
+  <style>
+    body {
+      font-family: Arial;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+      background: #f9f9f9;
+    }
+    button {
+      padding: 15px 30px;
+      font-size: 1.2em;
+      margin: 10px;
+      cursor: pointer;
+    }
+    #rewardBtn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Отримай 100 тапів!</h2>
+  <p>Підпишись на наш Telegram-канал, щоб отримати нагороду</p>
+
+  <button onclick="openTelegram()">Підписатись</button>
+  <button id="rewardBtn" disabled onclick="claimReward()">Отримати бонус</button>
+
+  <script>
+    let hasVisitedChannel = false;
+
+    function openTelegram() {
+      hasVisitedChannel = true;
+      // Відкриває канал у новій вкладці
+      window.open('https://t.me/+Ov0DYQFVwQFiM2Vi', '_blank');
+
+      // Імітація перевірки — в реальності потрібна серверна перевірка!
+      setTimeout(() => {
+        document.getElementById('rewardBtn').disabled = false;
+      }, 3000);
+    }
+
+    function claimReward() {
+      if (hasVisitedChannel) {
+        let taps = parseInt(localStorage.getItem('taps')) || 0;
+        taps += 100;
+        localStorage.setItem('taps', taps);
+        alert('🎉 Ви отримали 100 тапів!');
+        window.close(); // Закриває вкладку (не завжди працює)
+      }
+    }
+  </script>
+
+</body>
+</html>

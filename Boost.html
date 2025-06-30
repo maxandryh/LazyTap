@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Boost</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0; 
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+
+    /* Пастельний градієнт з анімацією */
+    background: linear-gradient(135deg, #f5e9d3, #d9ccc4, #c4b7a6);
+    background-size: 400% 400%;
+    animation: gradientBG 20s ease infinite;
+    color: black;
+  }
+  @keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  button {
+    font-size: 1.5em;
+    padding: 20px 40px;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+    transition: background-color 0.3s ease;
+    margin-bottom: 20px;
+  }
+  button:hover {
+    filter: brightness(0.9);
+  }
+  #boostValue {
+    font-size: 1.5em;
+    color: #333;
+    margin-bottom: 40px;
+  }
+  #backButton {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 8px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+    font-size: 1em;
+  }
+  #backButton:hover {
+    filter: brightness(0.9);
+  }
+</style>
+</head>
+<body>
+
+<button id="backButton">Назад</button>
+
+<button id="boostPlusOne">Boost +1</button>
+<div id="boostValue">Поточний Boost: 1</div>
+
+<script>
+  const backButton = document.getElementById('backButton');
+  const boostButton = document.getElementById('boostPlusOne');
+  const boostValue = document.getElementById('boostValue');
+
+  backButton.onclick = () => {
+    window.location.href = 'index.html'; // повернення на головну
+  };
+
+  let boost = parseInt(localStorage.getItem('boost')) || 1;
+  let taps = parseInt(localStorage.getItem('taps')) || 1000; // початкове значення, якщо не було
+
+  function boostPrice(level) {
+    return 100 * Math.pow(2, level - 1);
+  }
+
+  function updateBoostDisplay() {
+    boostValue.textContent = `Поточний Boost: ${boost} (ціна: ${boostPrice(boost)} тапів)`;
+  }
+
+  function applySkin() {
+    const skin = localStorage.getItem('skin') || 'green';
+    switch(skin) {
+      case 'red':
+        boostButton.style.backgroundColor = '#e74c3c';
+        backButton.style.backgroundColor = '#e74c3c';
+        break;
+      case 'yellow':
+        boostButton.style.backgroundColor = '#f1c40f';
+        boostButton.style.color = 'black';
+        backButton.style.backgroundColor = '#f1c40f';
+        backButton.style.color = 'black';
+        break;
+      default: // green
+        boostButton.style.backgroundColor = '#4CAF50';
+        backButton.style.backgroundColor = '#4CAF50';
+        backButton.style.color = 'white';
+        boostButton.style.color = 'white';
+    }
+  }
+
+  boostButton.onclick = () => {
+    const price = boostPrice(boost);
+    if (taps >= price) {
+      taps -= price;
+      boost++;
+      localStorage.setItem('boost', boost);
+      localStorage.setItem('taps', taps);
+      updateBoostDisplay();
+      alert(`Куплено Boost x${boost - 1} → x${boost}!`);
+    } else {
+      alert('Недостатньо тапів для покупки бусту!');
+    }
+  };
+
+  window.addEventListener('storage', (event) => {
+    if(event.key === 'skin') {
+      applySkin();
+    }
+  });
+
+  applySkin();
+  updateBoostDisplay();
+</script>
+
+
+</body>
+</html>
