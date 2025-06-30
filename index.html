@@ -3,9 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>LazyTap зі скінами</title>
+<title>LazyTap</title>
 <style>
-  body { font-family: Arial; text-align: center; margin: 20px; }
+  body {
+    font-family: Arial;
+    text-align: center;
+    margin: 20px;
+    user-select: none;
+    -webkit-user-select: none;
+  }
 
   #tapButton {
     width: 140px;
@@ -18,7 +24,11 @@
     background-size: cover;
     background-position: center;
     box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-    transition: background-image 0.3s ease;
+    transition: none;
+  }
+
+  #tapButton:active {
+    transform: none;
   }
 
   .skin1 { background-image: url('images/skin1.png'); }
@@ -34,6 +44,7 @@
     margin-left: auto;
     margin-right: auto;
   }
+
   .iconButton {
     display: flex;
     flex-direction: column;
@@ -41,16 +52,26 @@
     cursor: pointer;
     color: #666;
     font-size: 0.9em;
-    user-select: none;
   }
+
   .iconImg {
     width: 40px;
     height: 40px;
     margin-bottom: 8px;
   }
+
   .screen {
     display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+    overflow-y: auto;
+    z-index: 10;
+    padding: 20px;
   }
+
   .skinButton {
     margin: 5px;
     padding: 10px 15px;
@@ -63,66 +84,81 @@
 </head>
 <body>
 
-<h2>Тапів: <span id="totalTaps">0</span></h2>
-<h3>Енергія: <span id="energy">1000</span></h3>
+<!-- Головний екран -->
+<div id="mainScreen">
+  <h2>Тапів: <span id="totalTaps">0</span></h2>
+  <h3>Енергія: <span id="energy">1000</span> / <span id="maxEnergy">1000</span></h3>
 
-<button id="tapButton" class="skin1">Тап</button>
+  <button id="tapButton" class="skin1">Тап</button>
 
-<div id="iconsRow">
-  <div class="iconButton" data-screen="referralScreen">
-    <img class="iconImg" src="https://img.icons8.com/ios-filled/50/000000/referral.png" alt="Реферал" />
-    Реферал
-  </div>
-  <div class="iconButton" data-screen="earnScreen">
-    <img class="iconImg" src="https://img.icons8.com/ios-filled/50/000000/money-bag.png" alt="Earn" />
-    Earn
-  </div>
-  <div class="iconButton" data-screen="bustScreen">
-    <img class="iconImg" src="https://img.icons8.com/ios-filled/50/000000/explosion.png" alt="Bust" />
-    Bust
-  </div>
-  <div class="iconButton" data-screen="skinsScreen">
-    <img class="iconImg" src="https://img.icons8.com/ios-filled/50/000000/t-shirt.png" alt="Skins" />
-    Skins
+  <div id="iconsRow">
+    <div class="iconButton" onclick="openScreen('referralScreen')">
+      <img class="iconImg" src="https://img.icons8.com/ios-filled/50/000000/referral.png" alt="Реферал" />
+      Реферал
+    </div>
+    <div class="iconButton" onclick="openScreen('earnScreen')">
+      <img class="iconImg" src="https://img.icons8.com/ios-filled/50/000000/money-bag.png" alt="Earn" />
+      Earn
+    </div>
+    <div class="iconButton" onclick="openScreen('bustScreen')">
+      <img class="iconImg" src="https://img.icons8.com/ios-filled/50/000000/explosion.png" alt="Bust" />
+      Bust
+    </div>
+    <div class="iconButton" onclick="openScreen('skinsScreen')">
+      <img class="iconImg" src="https://img.icons8.com/ios-filled/50/000000/t-shirt.png" alt="Skins" />
+      Skins
+    </div>
   </div>
 </div>
 
-<!-- Віртуальні екрани -->
-
+<!-- Екран Реферал -->
 <div id="referralScreen" class="screen">
   <h2>Реферал</h2>
-  <button class="closeScreen">Назад</button>
+  <button onclick="backToMain()">Назад</button>
 </div>
 
+<!-- Екран Earn -->
 <div id="earnScreen" class="screen">
   <h2>Earn</h2>
-  <button class="closeScreen">Назад</button>
+  <button onclick="backToMain()">Назад</button>
 </div>
 
+<!-- Екран Bust -->
 <div id="bustScreen" class="screen">
   <h2>Bust</h2>
-  <button class="closeScreen">Назад</button>
+  <p>Ціна бусту: <span id="bustPrice">500</span> тапів</p>
+  <button onclick="buyBust()">Купити буст (+100 до макс енергії)</button>
+  <br><br>
+  <button onclick="backToMain()">Назад</button>
 </div>
 
+<!-- Екран Skins -->
 <div id="skinsScreen" class="screen">
   <h2>Вибір скіна</h2>
   <button class="skinButton" onclick="setSkin('skin1')">Скін 1</button>
   <button class="skinButton" onclick="setSkin('skin2')">Скін 2</button>
   <button class="skinButton" onclick="setSkin('skin3')">Скін 3</button>
-  <button class="closeScreen">Назад</button>
+  <br><br>
+  <button onclick="backToMain()">Назад</button>
 </div>
 
 <script>
   let totalTaps = 0;
   let energy = 1000;
-  const maxEnergy = 1000;
+  let maxEnergy = 1000;
+  let bustPrice = 500;
+
   const energyElem = document.getElementById('energy');
   const totalTapsElem = document.getElementById('totalTaps');
+  const maxEnergyElem = document.getElementById('maxEnergy');
+  const bustPriceElem = document.getElementById('bustPrice');
   const tapButton = document.getElementById('tapButton');
 
   function updateDisplay() {
     energyElem.innerText = energy;
     totalTapsElem.innerText = totalTaps;
+    maxEnergyElem.innerText = maxEnergy;
+    bustPriceElem.innerText = bustPrice;
   }
 
   tapButton.onclick = () => {
@@ -142,27 +178,34 @@
     }
   }, 3000);
 
-  const screens = document.querySelectorAll('.screen');
-  const iconButtons = document.querySelectorAll('.iconButton');
-  const closeButtons = document.querySelectorAll('.closeScreen');
+  function openScreen(screenId) {
+    document.getElementById('mainScreen').style.display = 'none';
+    document.querySelectorAll('.screen').forEach(screen => screen.style.display = 'none');
+    document.getElementById(screenId).style.display = 'block';
+    updateDisplay();
+  }
 
-  iconButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      const screenId = button.getAttribute('data-screen');
-      screens.forEach(screen => screen.style.display = 'none');
-      document.getElementById(screenId).style.display = 'block';
-    });
-  });
-
-  closeButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      screens.forEach(screen => screen.style.display = 'none');
-    });
-  });
+  function backToMain() {
+    document.querySelectorAll('.screen').forEach(screen => screen.style.display = 'none');
+    document.getElementById('mainScreen').style.display = 'block';
+    updateDisplay();
+  }
 
   function setSkin(skinClass) {
-    tapButton.className = '';  // Забираємо всі попередні скіни
-    tapButton.classList.add(skinClass);  // Додаємо новий
+    tapButton.className = '';
+    tapButton.classList.add(skinClass);
+  }
+
+  function buyBust() {
+    if (totalTaps >= bustPrice) {
+      totalTaps -= bustPrice;
+      maxEnergy += 100;
+      bustPrice += 200;
+      alert('✅ Ви купили буст! Макс енергія тепер: ' + maxEnergy);
+      updateDisplay();
+    } else {
+      alert('❌ Недостатньо тапів для покупки бусту!');
+    }
   }
 
   updateDisplay();
