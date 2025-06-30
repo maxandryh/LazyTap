@@ -1,278 +1,248 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>LazyTap WebApp</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0; padding: 0;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      height: 100vh; text-align: center;
-      background: linear-gradient(135deg, #f5e9d3, #d9ccc4, #c4b7a6);
-      background-size: 400% 400%;
-      animation: gradientBG 20s ease infinite;
-      color: #4b3b2b;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LazyTap WebApp</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0; padding: 20px;
+    display: flex; flex-direction: column;
+    align-items: center; 
+    height: 100vh; 
+    text-align: center;
+    background: linear-gradient(135deg, #f5e9d3, #d9ccc4, #c4b7a6);
+    background-size: 400% 400%;
+    animation: gradientBG 20s ease infinite;
+    color: #4b3b2b;
+  }
+  @keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
 
-    @keyframes gradientBG {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
+  #status {
+    font-size: 1.2em;
+    margin-bottom: 5px;
+    font-weight: 600;
+  }
+  #levelXp {
+    font-size: 1em;
+    margin-bottom: 20px;
+    color: #3c2f1c;
+  }
 
-    #tapCount {
-      font-size: 2.5em;
-      font-weight: bold;
-      margin-bottom: 20px;
-    }
+  #dailyRewardSection {
+    margin-bottom: 20px;
+  }
 
-    #levelInfo {
-      font-size: 1.2em;
-      margin-bottom: 10px;
-    }
+  #dailyRewardBtn {
+    padding: 10px 20px;
+    font-size: 1.2em;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+  }
+  #dailyRewardBtn:disabled {
+    background-color: #999;
+    cursor: default;
+  }
 
-    #xpBarContainer {
-      width: 80%;
-      max-width: 300px;
-      height: 10px;
-      background: #ccc;
-      border-radius: 5px;
-      overflow: hidden;
-      margin-bottom: 30px;
-    }
+  #dailyRewardMsg {
+    margin-top: 8px;
+    font-style: italic;
+    color: #333;
+  }
 
-    #xpBar {
-      height: 100%;
-      background: #4CAF50;
-      width: 0%;
-      transition: width 0.3s;
-    }
+  #tapButton {
+    width: 140px;
+    height: 140px;
+    border-radius: 70px;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 2em;
+    cursor: pointer;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+    transition: background-color 0.3s ease;
+    margin-bottom: 20px;
+  }
 
-    #tapButton {
-      width: 140px;
-      height: 140px;
-      border-radius: 70px;
-      border: none;
-      background-color: #4CAF50;
-      color: white;
-      font-size: 2em;
-      cursor: pointer;
-      box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-      transition: background-color 0.3s ease;
-      margin-bottom: 20px;
-    }
+  #tapButton:hover { background-color: #45a049; }
 
-    #tapButton:hover { background-color: #45a049; }
+  #tapButton:active {
+    transform: scale(0.9);
+    box-shadow: 0 0 15px 4px #4CAF50;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+  }
 
-    #tapButton:active {
-      transform: scale(0.9);
-      box-shadow: 0 0 15px 4px #4CAF50;
-      transition: transform 0.1s ease, box-shadow 0.1s ease;
-    }
+  #iconsRow {
+    margin-top: 40px;
+    width: 90%;
+    max-width: 400px;
+    display: flex;
+    justify-content: space-around;
+  }
 
-    #resetButton {
-      margin-top: 10px;
-      padding: 10px 20px;
-      font-size: 1em;
-      cursor: pointer;
-    }
+  .iconButton {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    color: #666;
+    font-size: 0.9em;
+    user-select: none;
+  }
 
-    #iconsRow {
-      margin-top: 40px;
-      width: 90%;
-      max-width: 400px;
-      display: flex;
-      justify-content: space-around;
-    }
+  .iconButton:hover { color: #4CAF50; }
 
-    .iconButton {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      cursor: pointer;
-      color: #666;
-      font-size: 0.9em;
-      user-select: none;
-    }
-
-    .iconButton:hover { color: #4CAF50; }
-
-    .iconImg {
-      width: 40px;
-      height: 40px;
-      margin-bottom: 8px;
-    }
-  </style>
+  .iconImg {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 8px;
+  }
+</style>
 </head>
 <body>
 
-<div id="tapCount">Тапів: 1000</div>
-<div id="levelInfo">Рівень: 1 | XP: 0 / 100</div>
-<div id="xpBarContainer"><div id="xpBar"></div></div>
-<button id="tapButton" aria-label="Тап кнопка">🔘</button>
-<button id="resetButton">Reset</button>
-<div>
-  Ваш реферальний код: <strong id="refCodeDisplay"></strong><br/>
-  Посилання для рефералів: <input type="text" id="refLink" readonly style="width:300px" />
+<div id="status">Тапів: 0 | Boost: x1 | ⚡️1000</div>
+<div id="levelXp">Рівень: 1 | XP: 0 / 100</div>
+
+<div id="dailyRewardSection">
+  <button id="dailyRewardBtn">Отримати щоденну нагороду</button>
+  <p id="dailyRewardMsg"></p>
 </div>
 
+<button id="tapButton" aria-label="Тап кнопка">🔘</button>
+
 <div id="iconsRow">
-  <div class="iconButton" onclick="alert('Реферал')">
+  <div class="iconButton" onclick="window.location.href='referral.html'">
     <img class="iconImg" src="https://img.icons8.com/ios-filled/50/000000/referral.png" alt="Реферал" />
     Реферал
   </div>
-  <div class="iconButton" onclick="window.open('earn.html', '_blank')">
+  <div class="iconButton" onclick="alert('Earn - тут буде новий екран')">
     <img class="iconImg" src="https://img.icons8.com/ios-filled/50/000000/money-bag.png" alt="Earn" />
     Earn
   </div>
-  <div class="iconButton" onclick="window.open('boost.html', '_blank')">
+  <div class="iconButton" onclick="alert('Boost - тут буде новий екран')">
     <img class="iconImg" src="https://img.icons8.com/ios-filled/50/000000/rocket.png" alt="Boost" />
     Boost
   </div>
-  <div class="iconButton" onclick="window.open('skins.html', '_blank')">
+  <div class="iconButton" onclick="alert('Skins - тут буде новий екран')">
     <img class="iconImg" src="https://img.icons8.com/ios-filled/50/000000/t-shirt.png" alt="Skins" />
     Skins
   </div>
 </div>
 
 <script>
-  const tapCountElem = document.getElementById('tapCount');
-  const levelInfoElem = document.getElementById('levelInfo');
-  const xpBar = document.getElementById('xpBar');
+  const statusElem = document.getElementById('status');
+  const levelXpElem = document.getElementById('levelXp');
   const tapButton = document.getElementById('tapButton');
-  const resetButton = document.getElementById('resetButton');
-  const urlParams = new URLSearchParams(window.location.search);
-  const ref = urlParams.get('ref');
+  const dailyRewardBtn = document.getElementById('dailyRewardBtn');
+  const dailyRewardMsg = document.getElementById('dailyRewardMsg');
 
-if (ref && !localStorage.getItem('referredBy')) {
-  localStorage.setItem('referredBy', ref);
-}
-
-
+  // Ініціалізація з localStorage
   let taps = parseInt(localStorage.getItem('taps')) || 0;
   let boost = parseInt(localStorage.getItem('boost')) || 1;
+  let energy = parseInt(localStorage.getItem('energy')) || 1000;
   let xp = parseInt(localStorage.getItem('xp')) || 0;
   let level = parseInt(localStorage.getItem('level')) || 1;
-  let energy = parseInt(localStorage.getItem('energy')) || 1000;
 
   const maxEnergy = 1000;
-  const energyRestoreRate = 1; // +1 за 1 сек
+  const energyRestoreRate = 1; // +1 енергії за 1 секунду
 
   function xpForNextLevel(level) {
-    return 100 + (level - 1) * 50;
+    return 100 + (level - 1)*50;
   }
 
-  function boostPrice(boostLevel) {
-    return 100 * Math.pow(2, boostLevel - 1); // 100, 200, 400, 800...
+  function updateStatus() {
+    statusElem.textContent = `Тапів: ${taps} | Boost: x${boost} | ⚡️${energy}`;
+    levelXpElem.textContent = `Рівень: ${level} | XP: ${xp} / ${xpForNextLevel(level)}`;
   }
-
-  function updateDisplay() {
-    tapCountElem.textContent = `Тапів: ${taps} | Boost: x${boost} | ⚡️${energy}`;
-    levelInfoElem.textContent = `Рівень: ${level} | XP: ${xp} / ${xpForNextLevel(level)}`;
-    const percent = Math.min((xp / xpForNextLevel(level)) * 100, 100);
-    xpBar.style.width = `${percent}%`;
-  }
-  function generateReferralCode() {
-  return 'user-' + Math.random().toString(36).substr(2, 9);
-}
-
-let myReferralCode = localStorage.getItem('referralCode');
-if (!myReferralCode) {
-  myReferralCode = generateReferralCode();
-  localStorage.setItem('referralCode', myReferralCode);
-}
-
-  function applySkin() {
-    const skin = localStorage.getItem('skin') || 'green';
-    switch (skin) {
-      case 'red': tapButton.style.backgroundColor = '#e74c3c'; break;
-      case 'yellow': tapButton.style.backgroundColor = '#f1c40f'; break;
-      default: tapButton.style.backgroundColor = '#4CAF50';
-    }
-  }
-
-  applySkin();
-  updateDisplay();
 
   tapButton.onclick = () => {
-    if (energy > 0) {
+    if(energy > 0) {
       taps += boost;
-      xp += 1;
-      energy -= 1;
-
-      while (xp >= xpForNextLevel(level)) {
+      xp++;
+      energy--;
+      
+      // Левелап
+      while(xp >= xpForNextLevel(level)) {
         xp -= xpForNextLevel(level);
         level++;
-        alert(`🎉 Новий рівень: ${level}`);
+        alert(`🎉 Вітаємо! Новий рівень: ${level}`);
       }
 
-      localStorage.setItem('taps', taps);
-      localStorage.setItem('xp', xp);
-      localStorage.setItem('level', level);
-      localStorage.setItem('energy', energy);
-      updateDisplay();
+      saveData();
+      updateStatus();
     } else {
-      alert('Немає енергії! Зачекай кілька секунд ⏳');
+      alert('⚡️ Немає енергії! Зачекай кілька секунд.');
     }
   };
 
-  resetButton.onclick = () => {
-    taps = 0;
-    boost = 1;
-    xp = 0;
-    level = 1;
-    energy = maxEnergy;
-    localStorage.setItem('taps', taps);
-    localStorage.setItem('boost', boost);
-    localStorage.setItem('xp', xp);
-    localStorage.setItem('level', level);
-    localStorage.setItem('energy', energy);
-    updateDisplay();
+  // Щоденна нагорода
+  function canGetDailyReward() {
+    const lastReward = localStorage.getItem('lastDailyReward');
+    if(!lastReward) return true;
+    const lastDate = new Date(lastReward);
+    const now = new Date();
+    return (now - lastDate) > 24*60*60*1000;
+  }
+
+  function updateDailyRewardBtn() {
+    if(canGetDailyReward()) {
+      dailyRewardBtn.disabled = false;
+      dailyRewardMsg.textContent = "Щоденна нагорода доступна!";
+    } else {
+      dailyRewardBtn.disabled = true;
+      dailyRewardMsg.textContent = "Щоденна нагорода вже отримана сьогодні.";
+    }
+  }
+
+  dailyRewardBtn.onclick = () => {
+    if(canGetDailyReward()) {
+      const rewardAmount = 1000;
+      taps += rewardAmount;
+      localStorage.setItem('lastDailyReward', new Date().toISOString());
+      saveData();
+      updateStatus();
+      updateDailyRewardBtn();
+      alert(`🎁 Ви отримали щоденну нагороду: +${rewardAmount} тапів!`);
+    }
   };
 
-  // Автовідновлення енергії
+  // Енергія автоматично відновлюється
   setInterval(() => {
-    if (energy < maxEnergy) {
+    if(energy < maxEnergy) {
       energy += energyRestoreRate;
-      if (energy > maxEnergy) energy = maxEnergy;
-      localStorage.setItem('energy', energy);
-      updateDisplay();
+      if(energy > maxEnergy) energy = maxEnergy;
+      saveData();
+      updateStatus();
     }
   }, 1000);
 
-  // Покупка boost за тапи
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'b') { // натисни 'b' для покупки boost
-      const price = boostPrice(boost);
-      if (taps >= price) {
-        taps -= price;
-        boost++;
-        alert(`✅ Куплено Boost! Тепер x${boost}`);
-        localStorage.setItem('boost', boost);
-        localStorage.setItem('taps', taps);
-        updateDisplay();
-      } else {
-        alert(`❌ Потрібно ${price} тапів для бусту`);
-      }
-    }
-  });
+  function saveData() {
+    localStorage.setItem('taps', taps);
+    localStorage.setItem('boost', boost);
+    localStorage.setItem('energy', energy);
+    localStorage.setItem('xp', xp);
+    localStorage.setItem('level', level);
+  }
 
-  // Якщо змінюється з іншої вкладки
-  window.addEventListener('storage', (event) => {
-    if (event.key === 'boost') boost = parseInt(event.newValue) || 1;
-    if (event.key === 'taps') taps = parseInt(event.newValue) || 0;
-    if (event.key === 'xp') xp = parseInt(event.newValue) || 0;
-    if (event.key === 'level') level = parseInt(event.newValue) || 1;
-    if (event.key === 'energy') energy = parseInt(event.newValue) || maxEnergy;
-    if (event.key === 'skin') applySkin();
-    updateDisplay();
-  });
-  document.getElementById('refCodeDisplay').textContent = myReferralCode;
-  document.getElementById('refLink').value = `${window.location.origin}${window.location.pathname}?ref=${myReferralCode}`;
+  // Прийом реферального коду
+  const urlParams = new URLSearchParams(window.location.search);
+  const ref = urlParams.get('ref');
+  if(ref && !localStorage.getItem('referredBy')) {
+    localStorage.setItem('referredBy', ref);
+    alert(`Ви прийшли по реферальному посиланню користувача ${ref}`);
+  }
 
+  updateStatus();
+  updateDailyRewardBtn();
 </script>
 
 </body>
